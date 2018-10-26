@@ -1,9 +1,11 @@
+import argparse
 import sys
 import string
 import os
 import numpy as np
 import GPRegression as GPR
 import gapGP
+import genNetwork as genN
 import matplotlib.pyplot as plt
 import Clustering
 
@@ -11,6 +13,41 @@ import Clustering
 # numS = 2 ?
 # x for each condition is same
 
+class inputC :
+        args = {}
+        organism = ""
+        expFile = ""
+        outDir = ""
+        numTP = 0
+        numRe = 0
+        DEGCut = 0
+        clusterCut = 0
+        timeLag = 0
+
+def arg_parse():
+        inputs = inputC()
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-f', '--file', help="text file of expression value", required=True)
+        parser.add_argument('-o', '--outdir', help="output directory", required=True)
+        parser.add_argument('-s', '--organism', help="organism code for KEGG", required=True)
+        parser.add_argument('-nt', '--numTP', type=int, help="number of time points", required=True)
+        parser.add_argument('-nr', '--numRe', type=int, help="number of replicates", required=True)
+        parser.add_argument('-c2', '--clustercut', type=float, default=1.0, help="cutoff for clustering", required=True)
+        parser.add_argument('-c1', '--degcut', type=float, default=1.0, help="cutoff for finding DEGs", required=True)
+        parser.add_argument('-l', '--timelag', type=float, default=1.0, help="time-lag factor", required=True)
+
+        args = vars(parser.parse_args())
+        inputs.args = args
+        inputs.expFile = args['file']
+        inputs.outDir = args['outdir']
+        inputs.organism = args['organism']
+        inputs.numTP = args['numTP']
+        inputs.numRe = args['numRe']
+        inputs.clusterCut = args['clustercut']
+        inputs.DEGCut = args['degcut']
+        inputs.timeLag = args['timelag']
+        return inputs
+ 
 def addNoise(series, reps, s):
   start = 0
   for i in range(len(reps)):
@@ -44,7 +81,7 @@ def loadData(inF, reps, delim, cols, norm=False, noise=0.0) :
     series_avg = np.concatenate(np.array(series_avg), axis=1)
   return labels, names, probes, series, series_avg
 
-def run(pjname, conf, met) :
+def main(inputs) :
   # Configuration - change according to the dataset
   ks = conf[0]
   reps = conf[1]
@@ -60,8 +97,8 @@ def run(pjname, conf, met) :
   X_pred = np.array([X[0]])
   while (X_pred[len(X_pred)-1]<max(X)) :
     X_pred = np.append(X_pred, X_pred[len(X_pred)-1]+interval)
-  if not os.path.exists(pjname) :
-    os.mkdir(pjname)  
+  if not os.path.exists(inputs.pjname) :
+    os.mkdir(inputs.pjname)  
 
   # Load expression data
   labels, names, probes, series, series_avg = loadData(expFile, reps, delim, cols, norm)
@@ -70,23 +107,10 @@ def run(pjname, conf, met) :
   print np.min(series_avg), np.max(series_avg)
 
   # assume there is one condition
-  c, std, c_long, std_long, p, k, labels = gapGP.gap(X, X_pred, series_avg, met, pjname, numS, ks)
-  print 'optK', k 
-
-def main(pjname, met) :
-  # ks, reps, X, expFile, k, norm, col of name, probe, lab, series(0:4)
-  conf22875 = [range(1,21), [3,1], [0,8,16,24,48,96], 'GSE22875/GSE22875.txt', ]
-  conf69667 = [range(1,11), [2], [0,6,12,24,36,48,72,96], 'GSE69667/GSE69667.txt', 3, True, '\t', 0, 19, 18, (2, 18)]
-  confCho = [range(2, 21), [1], range(0, 170, 10), 'Cho/Cho_expr.txt', 5, True, '\t', 0, 0, 1, (2, 19)]
-  confCho2 = [range(1, 11), [1], [0, 10, 20, 40, 80, 160], 'Cho/Cho_expr2.txt', 5, True, '\t', 0, 0, 1, (2, 8)]
-  confLeaf = [range(1, 11), [1], range(427), 'UCR/OSULeaf/OSULeaf', 6, False, ',', 0, 0, 0, (1, 428)]
-  confZNF =  [range(1, 11), [3], [0,1,2,3,4,5,6,8,12,24], 'ZNF217/GSE78169_expr_DEG.txt', 3, True, '\t', 0, 1, 2, (4, 34)]
-  run('GSE69667_AC_C_1', conf69667, met)
-  #run(pjname, confCho, met)
-  #run('Cho_T6', confCho2)
-  #run('UCR_Leaf', confLeaf)
-  #run('Cho_T6-51', confCho2)
-  #run(pjname, confZNF, met)
+  c, std, c_long, std_long, p, k, labels = gapGP.gap(X, X_pred, series_avg, met, inputs.pjname, numS, ks)
+  print 'optK', k
+  genN.genNetwork(inputs) 
 
 if __name__ == "__main__" :
-  main(sys.argv[1], sys.argv[2])
+  inputs = arg_parse()
+  main(inputs)

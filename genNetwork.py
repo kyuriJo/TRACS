@@ -51,13 +51,14 @@ def genPGdict(org):
         pgdict[p]=set()
       pgdict[p].add(g)
       genes.add(g)
-  return pgdict, len(genes)
+  return pgdict, genes
 
 def calEnrich(pjname, org, k, names, lab):
-  #edgeF = open(pjname+'/K'+'{:02d}'.format(k)+'_edge.txt', 'w')
-  pgDict, N = genPGdict(org)
-  print N
-  #names = genNames(org, names)
+  pgDict, genes = genPGdict(org)
+  print len(genes)
+  # If gene names are official symbols, generate a corresponding array of Entrez ID
+  if len(genes & set(names))==0 : 
+    names = genNames(org, names)
   print names
   # gen matrix of pvals for cluster x pathway
   pathways = np.array(pgDict.keys())
@@ -106,14 +107,3 @@ def genNetwork(pjname, conf, k, cond, org) :
   order = calSBD(means)
   calEnrich(pjname, org, k, names, labels)
   return
- 
-def main() :
-  confCho = [range(2, 21), [1], range(0, 170, 10), 'Cho/Cho_expr.txt', 5, True, '\t', 0, 0, 1, (2, 19)]
-  conf69667 = [range(1,11), [2], [0,6,12,24,36,48,72,96], 'GSE69667/GSE69667_ent.txt', 3, True, '\t', 0, 20, 19, (3, 19)] 
-  confZNF =  [range(1, 11), [3], [0,1,2,3,4,5,6,8,12,24], 'ZNF217/GSE78169_expr_DEG.txt', 3, True, '\t', 1, 1, 2, (4, 34)]
-  # cond, cl starts from 1 (same as file name)
-  genNetwork('GSE69667_KM_1', conf69667, 3, 1, 'hsa')
- 
-if __name__ == "__main__" :
-  #main(sys.argv[1], sys.argv[2], sys.argv[3])
-  main()
