@@ -14,40 +14,25 @@ import Clustering
 # x for each condition is same
 
 class inputC :
-        args = {}
-        organism = ""
-        expFile = ""
-        outDir = ""
-        numTP = 0
-        numRe = 0
-        DEGCut = 0
-        clusterCut = 0
-        timeLag = 0
+  args = {}
+  k_range = [] 
+  Xs = [] 
+  expFile = ""
 
 def arg_parse():
-        inputs = inputC()
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-f', '--file', help="text file of expression value", required=True)
-        parser.add_argument('-o', '--outdir', help="output directory", required=True)
-        parser.add_argument('-s', '--organism', help="organism code for KEGG", required=True)
-        parser.add_argument('-nt', '--numTP', type=int, help="number of time points", required=True)
-        parser.add_argument('-nr', '--numRe', type=int, help="number of replicates", required=True)
-        parser.add_argument('-c2', '--clustercut', type=float, default=1.0, help="cutoff for clustering", required=True)
-        parser.add_argument('-c1', '--degcut', type=float, default=1.0, help="cutoff for finding DEGs", required=True)
-        parser.add_argument('-l', '--timelag', type=float, default=1.0, help="time-lag factor", required=True)
+  inputs = inputC()
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-f', '--file', help="text file of expression data", required=True)
+  parser.add_argument('-ks', '--kstart', type=int, default=1, help="Starting k for testing the number of clusters")
+  parser.add_argument('-ke', '--kend', type=int, default=10, help="Ending k for testing the number of clusters")
+  parser.add_argument('-t', '--timepoints', help="Observed time points of expresson data", required=True)
 
-        args = vars(parser.parse_args())
-        inputs.args = args
-        inputs.expFile = args['file']
-        inputs.outDir = args['outdir']
-        inputs.organism = args['organism']
-        inputs.numTP = args['numTP']
-        inputs.numRe = args['numRe']
-        inputs.clusterCut = args['clustercut']
-        inputs.DEGCut = args['degcut']
-        inputs.timeLag = args['timelag']
-        return inputs
- 
+  args = vars(parser.parse_args())
+  inputs.args = args
+  inputs.expFile = args['file']
+  inputs.outDir = args['outdir']
+  return inputs
+
 def addNoise(series, reps, s):
   start = 0
   for i in range(len(reps)):
