@@ -1,7 +1,7 @@
 import sys, os
 import scipy.stats
 import numpy as np
-import TiClNet
+import TRACS
 import rpvote
 import GPRegression as GPR
 import DTW
@@ -91,7 +91,7 @@ def genNetwork(pjname, conf, k, cond, org) :
   while (X_pred[len(X_pred)-1]<max(X)) :
     X_pred = np.append(X_pred, X_pred[len(X_pred)-1]+interval)
 
-  labels, names, probes, series, series_avg = TiClNet.loadData(expFile, reps, delim, cols, norm)
+  labels, names, probes, series, series_avg = TRACS.loadData(expFile, reps, delim, cols, norm)
   subname = 'K'+'{:02d}'.format(k)
   labels = np.genfromtxt(pjname+'/'+subname+'_labels.txt', delimiter='\t', dtype=np.str, usecols=[0])
   labels = labels.astype(np.int)
