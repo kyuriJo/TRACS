@@ -1,14 +1,15 @@
 # TRACS
 * Prerequisite : R (>=3.2.0, dtwclust package), Python 2.* (Scipy, numpy, matplotlib, sklearn, rpy2).
-* TRACS takes four (+ two optional) arguments
+* TRACS takes six (+ three optional) arguments
+* Example:
 ```console
-python TRACS.py -f [gene_expression_file] -t [#_of_time_points] -r [#_of_replicates] -o [output_directory]  -ks [start K, optional] -ke [end K, optinal]
+python TRACS.py -f expr.txt -tn 5 -rn 3 -tp 0,10,20,40,60 -o results -og hsa
 ```
 
 ## Arguments
 1. Gene expression file (-f, --file)
    * Gene expression file should be tab-delimited.
-   * If there are T time points for each biological replicate, columns should be arranges as [T columns from first replicate] -> [T columns from second replicate] -> ...
+   * If there are T time points for each biological replicate, columns should be arranges as <br>[T columns from first replicate] -> [T columns from second replicate] -> ...
    * Example:
 ```
 Gene  R1-T1  R1-T2 R1-T3 ... R2-T1 R2-T2 R2-T3 ...
