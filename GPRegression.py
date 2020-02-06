@@ -23,7 +23,7 @@ def multipleReg(X, X_pred, Ys, pjname, subname, c, i, minmax, bound=(0.1, 0.1)) 
   like = m.log_marginal_likelihood(m.kernel_.theta)
   pred_m, pred_v = m.predict(X_pred_, return_std=True)
   pred_m_X, pred_v_X = m.predict(X_, return_std=True)
-  if (subname!='TA'):
+  if (subname!='rand'):
     fig = plt.figure()
     mse = mean_squared_error(Ys, np.repeat(pred_m_X.reshape((1, len(X))), Ys.shape[0], axis=0))
     dist = np.mean([gapGP.calDist_l(Ys[ii,:], X, X_pred, pred_m, pred_v) for ii in range(Ys.shape[0])])
