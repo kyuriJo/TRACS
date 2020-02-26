@@ -76,7 +76,6 @@ def main(inputs) :
 
   # Calculate gap statistics
   c, std, c_long, std_long, p, k, labels = gapGP.gap(X, X_pred, series_avg, inputs['method'], inputs['outdir'], numS, ks)
-  k = 12
   print 'Optimal K predicted:', k
   print 'Generating a network ...'
   genN.genNetwork(inputs, k) 

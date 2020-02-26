@@ -89,7 +89,7 @@ def makeNetFiles(pjname, subname, order, pairs, enRes):
   for i in range(len(order)) :
     nodeF.write('C'+str(i+1)+'\t'+subname+'P1cluster'+str(i+1)+'.png'+'\n')
   index = open(pjname+'/index.html', 'w')
-  index.write('<!DOCTYPE>\n<html>\n  <head>\n    <title>TRACS</title>\n    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">\n    <link href="style.css" rel="stylesheet" />\n    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise,fetch"></script>\n    <script src="../cytoscape.min.js"></script>\n  </head>\n  <body>\n    <h1>TRACS</h1>\n    <div id="cy"></div>\n    <script src="code.js"></script>\n  </body>\n</html>\n')
+  index.write('<!DOCTYPE>\n<html>\n  <head>\n    <title>TRACS</title>\n    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">\n    <link href="../asset/style.css" rel="stylesheet" />\n    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise,fetch"></script>\n    <script src="../asset/cytoscape.min.js"></script>\n  </head>\n  <body>\n    <h1>TRACS</h1>\n    <div id="cy"></div>\n    <script src="code.js"></script>\n  </body>\n</html>\n')
   js = open(pjname+'/code.js', 'w')
   jscode = """fetch('jsonfile', {mode: 'no-cors'})
 .then(function(res) {
