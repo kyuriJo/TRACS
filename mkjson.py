@@ -19,7 +19,7 @@ def visNetwork(pjname, subname) :
   Pos[Edata[0][0]] = np.array([0,0], dtype=np.int32)
   if Delay[0] == '0':
       for i, data in enumerate(Edata):
-          if data[4]=='1' : continue
+          if data[4]=='Non-neighbor' : continue
           start, end = data[:2]
           if i==0:
               Pos[end] = Pos[start] + np.array([0,100])
@@ -29,7 +29,7 @@ def visNetwork(pjname, subname) :
   elif '0' in Delay and Delay[0] != '0':
       Pos[Edata[0][0]] = np.array([0,50], dtype=np.int32)
       for i, data in enumerate(Edata):
-          if data[4]=='1' : continue
+          if data[4]=='Non-neighbor' : continue
           start, end = data[:2]
           if Delay[i] == '0':
               Pos[start][1] = 0
@@ -39,7 +39,7 @@ def visNetwork(pjname, subname) :
               Pos[end][1] = 50
   else:
       for data in Edata:
-          if data[4]=='1' : continue
+          if data[4]=='Non-neighbor' : continue
           start, end = data[:2]
           Pos[end] = Pos[start] + np.array([100,0])
 

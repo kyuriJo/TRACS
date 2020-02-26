@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import numpy as np
+import pandas as pd
 import GPRegression as GPR
 import gapGP
 import genNetwork as genN
@@ -12,9 +13,9 @@ def arg_parse():
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--file', help="gene expression data (tab-delimited)", required=True)
   parser.add_argument('-tn', '--timenums', type=int, help="the number of time points in gene expresson data", required=True)
-  parser.add_argument('-tp', '--timepoints', type=int, help="a list of time points in gene expresson data", required=True)
+  parser.add_argument('-tp', '--timepoints', help="a list of time points in gene expresson data", required=True)
   parser.add_argument('-rn', '--repnums', type=int, help="the number of replicates in gene expression data", required=True)
-  parser.add_argument('-og', '--organism', deafult="NA", help="organism of interest")
+  parser.add_argument('-og', '--organism', default="NA", help="organism of interest")
   parser.add_argument('-o', '--outdir', help="output directory", required=True)
   parser.add_argument('-m', '--method', default="KM", help="method for clustering ")
   parser.add_argument('-ks', '--kstart', type=int, default=1, help="Starting k for testing the number of clusters")
@@ -35,11 +36,11 @@ def addNoise(series, reps, s):
 def loadData(inF, reps, delim, norm=False, noise=0.0) :
   with open(inF, "r") as f:
     lines = [l.split(delim) for l in filter(lambda x: len(x)>0, f.readlines())]
+    lines = lines[1:]
     names = np.array([Y[0] for Y in lines])
-    series = np.array([[float(_.strip()) for _ in Y[1:] for Y in lines])
+    series = np.array([[float(_.strip()) for _ in Y[1:]] for Y in lines])
     tmp = np.hsplit(series, sum(reps))
     tmp = addNoise(tmp, reps, noise)
-
     # Normalization
     if (norm):
       for i in range(sum(reps)) :
@@ -55,7 +56,7 @@ def loadData(inF, reps, delim, norm=False, noise=0.0) :
 def main(inputs) :
   # Assume that there is one phenotype
   ks = list(range(inputs['kstart'], inputs['kend']+1))
-  reps = [inputs['repilcates']]
+  reps = [inputs['repnums']]
   X = np.array(map(int, inputs['timepoints'].split(',')))
   expFile = inputs['file']
   norm = True
@@ -71,14 +72,15 @@ def main(inputs) :
 
   # Load expression data
   names, series, series_avg = loadData(expFile, reps, delim, norm)
-  print 'series', series.shape
-  print 'series_avg', series_avg.shape
-  print np.min(series_avg), np.max(series_avg)
+  print '# of Genes:', series_avg.shape[0], '\t# of time points:', series_avg.shape[1]
 
   # Calculate gap statistics
   c, std, c_long, std_long, p, k, labels = gapGP.gap(X, X_pred, series_avg, inputs['method'], inputs['outdir'], numS, ks)
-  print 'optK', k
+  k = 12
+  print 'Optimal K predicted:', k
+  print 'Generating a network ...'
   genN.genNetwork(inputs, k) 
+  print 'Done'
 
 if __name__ == "__main__" :
   inputs = arg_parse()

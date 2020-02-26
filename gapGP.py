@@ -111,6 +111,7 @@ def gap(X, X_pred, data, met, pjname, numS, ks, bound=(0.1,0.1)):
   gaps_d = scipy.zeros((len(ks),))
   stds_d = np.zeros((len(ks),))
   for (i,k) in enumerate(ks):
+    print 'Start analysis on k=', k
     kmc, kml = Clustering.clustering(k, X, data, met)
     # Added procedure : calculate GP mean and var rather than cluster centers
     # Calculate distance by likelihood of Gaussian rather than Euclidean
@@ -133,8 +134,8 @@ def gap(X, X_pred, data, met, pjname, numS, ks, bound=(0.1,0.1)):
     stds[i] = np.std(scipy.log(refdisps))*np.sqrt(1+1/float(nrefs))
     gaps_d[i] = scipy.mean(scipy.log(refdisps_d))-scipy.log(disp_d)
     stds_d[i] = np.std(scipy.log(refdisps_d))*np.sqrt(1+1/float(nrefs))
-    print 'Gap(GP) for', k, 'is', scipy.log(disp), '-', scipy.mean(scipy.log(refdisps)), '=', gaps[i]
-    print 'Gap(ED) for', k, 'is', scipy.log(disp_d), '-', scipy.mean(scipy.log(refdisps_d)), '=', gaps_d[i]
+    #print 'Gap(GP) for', k, 'is', scipy.log(disp), '-', scipy.mean(scipy.log(refdisps)), '=', gaps[i]
+    #print 'Gap(ED) for', k, 'is', scipy.log(disp_d), '-', scipy.mean(scipy.log(refdisps_d)), '=', gaps_d[i]
 
   # Find the optimal k by std of log(refdisps)
   opt_i = optK2(ks, gaps, stds)
